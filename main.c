@@ -17,12 +17,13 @@
 #include "OSEK.h"
 #include "LED_RGB.h"
 
-#define MODE1 0x00000100;
-
 int main (void)
 {
 	init_RGB();
 	os_init();
-	while (1);
-}
+	while (1)
+	{
 
+	}
+	return 0 ;
+}
