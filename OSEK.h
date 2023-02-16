@@ -27,6 +27,15 @@ typedef enum
 	TRUE
 }boolean_t;		//for autostart
 
+typedef enum
+{
+	SUSPEND,
+	READY,
+	RUNNING,
+	WAIT
+
+}activation_t;
+
 typedef struct
 {
 	void (*ptr_funct)(void);
@@ -35,7 +44,6 @@ typedef struct
 	boolean_t AUTOSTART;
 	uint8_t ACTIVATION;
 }Task_struct_t;
-
 
 void os_init();
 
@@ -47,12 +55,12 @@ void terminate_task(uint8_t);
 
 void scheduler();
 
-void delay(uint32_t);
-
 void task_A (void);
 
 void task_B (void);
 
 void task_C (void);
+
+void delay(uint32_t);
 
 #endif /* OSEK_H_ */

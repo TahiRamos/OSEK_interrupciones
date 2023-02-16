@@ -20,21 +20,21 @@ void os_init()
 	task_list[0].PRIORITY = 0;
 	task_list[0].SCHEDULE = FULL;
 	task_list[0].AUTOSTART = TRUE;
-	task_list[0].ACTIVATION = 1;
+	task_list[0].ACTIVATION = READY;
 	task_list[0].ptr_funct = task_A;
 
 	//TASK B
 	task_list[1].PRIORITY = 1;
 	task_list[1].SCHEDULE = FULL;
 	task_list[1].AUTOSTART = FALSE;
-	task_list[1].ACTIVATION = 1;
+	task_list[1].ACTIVATION = READY;
 	task_list[1].ptr_funct = task_B;
 
 	//TASK C
 	task_list[2].PRIORITY = 2;
 	task_list[2].SCHEDULE = FULL;
 	task_list[2].AUTOSTART = FALSE;
-	task_list[2].ACTIVATION = 0;
+	task_list[2].ACTIVATION = SUSPEND;
 	task_list[2].ptr_funct = task_C;
 
 
@@ -73,7 +73,6 @@ void os_init()
 		}
 	}
 	task_list[0].ptr_funct();
-
 }
 
 /*
@@ -82,7 +81,7 @@ void os_init()
  */
 void activate_task(uint8_t task_ID)
 {
-    task_list[task_ID].ACTIVATION = 1;    // 3:wait    2:running    1:ready    0:suspend
+    task_list[task_ID].ACTIVATION = READY;    // 3:wait    2:running    1:ready    0:suspend
 
     scheduler(); //barrido de tareas
 }
@@ -104,7 +103,7 @@ void chained_task(uint8_t task_ID)
  */
 void terminate_task(uint8_t task_ID)
 {
-    task_list[task_ID].ACTIVATION = 0;    // 3:wait    2:running    1:ready    0:suspend
+    task_list[task_ID].ACTIVATION = SUSPEND;    // 3:wait    2:running    1:ready    0:suspend
 
     scheduler(); //barrido de tareas
 }
@@ -117,7 +116,7 @@ void scheduler()
 {
 	for(int i = 0; i<2; i++)
 	{
-		if((task_list[i+1].PRIORITY < task_list[i].PRIORITY)&&(task_list[i].ACTIVATION == 1)) //1: ready, and high priority
+		if((task_list[i+1].PRIORITY < task_list[i].PRIORITY)&&(task_list[i].ACTIVATION == READY)) //1: ready, and high priority
 		{
 			//task_list[i].ptr_funct();
 		}
@@ -125,7 +124,29 @@ void scheduler()
 	}
 }
 
+//TASKs
+void task_A (void)
+{
+	activate_task(task_B_ID);
+	set_color(RED);
+	delay(2000000);
+	task_B();
+}
 
+void task_B (void)
+{
+	chained_task(task_C_ID);
+	set_color(BLUE);
+	delay(2000000);
+	task_C();
+}
+
+void task_C (void)
+{
+	terminate_task(task_C_ID);
+	set_color(GREEN);
+	delay(2000000);
+}
 
 void delay(uint32_t delay)
 {
@@ -135,30 +156,3 @@ void delay(uint32_t delay)
         __asm("nop");
     }
 }
-
-
-//TASKs
-void task_A (void)
-{
-	activate_task (task_B_ID);
-	set_color(RED);
-	delay(2000000);
-	task_B();
-}
-
-void task_B (void)
-{
-	chained_task (task_C_ID);
-	set_color(BLUE);
-	delay(2000000);
-	task_C();
-}
-
-void task_C (void)
-{
-	terminate_task (task_C_ID);
-	set_color(GREEN);
-	delay(2000000);
-}
-
-
