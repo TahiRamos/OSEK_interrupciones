@@ -12,68 +12,34 @@
 
 Task_struct_t task_list[3];
 
+
 void os_init()
 {
-	Task_struct_t aux;
 
 	//TASK A
-	task_list[0].PRIORITY = 0;
-	task_list[0].SCHEDULE = FULL;
-	task_list[0].AUTOSTART = TRUE;
-	task_list[0].ACTIVATION = 1;
+	task_list[0].priority = 0;
+	task_list[0].schedule = FULL;
+	task_list[0].autostart = TRUE;
+	task_list[0].state = SUSPENDED;
 	task_list[0].ptr_funct = task_A;
 
 	//TASK B
-	task_list[1].PRIORITY = 1;
-	task_list[1].SCHEDULE = FULL;
-	task_list[1].AUTOSTART = FALSE;
-	task_list[1].ACTIVATION = 1;
+	task_list[1].priority = 1;
+	task_list[1].schedule = FULL;
+	task_list[1].autostart = FALSE;
+	task_list[1].state = SUSPENDED;
 	task_list[1].ptr_funct = task_B;
 
+
 	//TASK C
-	task_list[2].PRIORITY = 2;
-	task_list[2].SCHEDULE = FULL;
-	task_list[2].AUTOSTART = FALSE;
-	task_list[2].ACTIVATION = 0;
+	task_list[2].priority = 2;
+	task_list[2].schedule = FULL;
+	task_list[2].autostart = FALSE;
+	task_list[2].state = SUSPENDED;
 	task_list[2].ptr_funct = task_C;
 
-
-	for(int i = 0; i<3; i++)
-	{
-		if(TRUE == task_list[i].AUTOSTART) //validar autostart
-		{
-			for(int i = 0; i<3; i++)
-			{
-				for(int j = i+1; j<4; j++)
-				{
-					if(task_list[j].PRIORITY < task_list[i].PRIORITY)
-					{
-						aux=task_list[j];
-						task_list[j] = task_list[i];
-						task_list[i] = aux;
-					}
-					else{}
-				}
-			}
-		}
-		else
-		{
-			for(int k=0; k<3; k++)
-			{
-				for(int l=k+1; l<4; l++)
-				{
-					if(task_list[l].PRIORITY<task_list[k].PRIORITY)
-					{
-						aux=task_list[l];
-						task_list[l]=task_list[k];
-						task_list[k]=aux;
-					}
-				}
-			}
-		}
-	}
-	task_list[0].ptr_funct();
-
+	task_list[1].state = SUSPENDED;
+	activate_task(0);
 }
 
 /*
@@ -82,10 +48,11 @@ void os_init()
  */
 void activate_task(uint8_t task_ID)
 {
-    task_list[task_ID].ACTIVATION = 1;    // 3:wait    2:running    1:ready    0:suspend
+    task_list[task_ID].state = READY;    // 3:wait    2:running    1:ready    0:suspend
 
     scheduler(); //barrido de tareas
 }
+
 
 /*
  * After termination of the calling task an other task is
@@ -93,35 +60,52 @@ void activate_task(uint8_t task_ID)
  */
 void chained_task(uint8_t task_ID)
 {
-	terminate_task(task_ID);
-    activate_task(task_ID);
-    scheduler();
+	for(uint8_t i= 0; i <TOTAL_TASKS; i++)
+		{
+			if(task_list[i].state == RUNNING)
+			{
+				task_list[i].state = SUSPENDED;
+			}
+		}
+	activate_task(task_ID);
 }
+
 
 /*
  * The calling task is transferred from the running state into
  * the suspended state
  */
-void terminate_task(uint8_t task_ID)
+void terminate_task(void)
 {
-    task_list[task_ID].ACTIVATION = 0;    // 3:wait    2:running    1:ready    0:suspend
-
-    scheduler(); //barrido de tareas
+	for(uint8_t i= 0; i <TOTAL_TASKS; i++)
+	{
+		if(task_list[i].state == RUNNING)
+		{
+			task_list[i].state = SUSPENDED;
+			scheduler();
+		}
+	}
 }
 
 /*
  * Using this service the task explicitly yields control to a
  * higher-priority ready task (if any exists)
  */
+
+
 void scheduler()
 {
-	for(int i = 0; i<2; i++)
+	for(int8_t i = TOTAL_PRIORITY; i>=0 ; i--)
 	{
-		if((task_list[i+1].PRIORITY < task_list[i].PRIORITY)&&(task_list[i].ACTIVATION == 1)) //1: ready, and high priority
+		for(int8_t j = 0; j<TOTAL_TASKS ; j++)
 		{
-			//task_list[i].ptr_funct();
+			if((task_list[j].state == READY)&&(task_list[j].priority == i))
+			{
+				task_list[j].state = RUNNING;
+				task_list[j].ptr_funct();
+				break;
+			}
 		}
-		else{}
 	}
 }
 
@@ -140,25 +124,26 @@ void delay(uint32_t delay)
 //TASKs
 void task_A (void)
 {
-	activate_task (task_B_ID);
-	set_color(RED);
+	set_color(GREEN);
 	delay(2000000);
-	task_B();
+	activate_task (task_B_ID);
+	set_color(GREEN);
+	delay(2000000);
+	terminate_task();
 }
 
 void task_B (void)
 {
-	chained_task (task_C_ID);
-	set_color(BLUE);
+	set_color(RED);
 	delay(2000000);
-	task_C();
+	chained_task (task_C_ID);
 }
 
 void task_C (void)
 {
-	terminate_task (task_C_ID);
-	set_color(GREEN);
+	set_color(BLUE);
 	delay(2000000);
+	terminate_task ();
 }
 
 
