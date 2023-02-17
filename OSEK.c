@@ -39,41 +39,6 @@ void os_init()
 	task_list[2].state = SUSPENDED;
 	task_list[2].ptr_funct = task_C;
 
-//	for(int i = 0; i<TOTAL_TASKS; i++)
-//	{
-//		if(TRUE == task_list[i].autostart) //validar autostart
-//		{
-//			for(int i = 0; i<TOTAL_TASKS; i++)
-//			{
-//				for(int j = i+1; j<TOTAL_TASKS+1; j++)
-//				{
-//					if(task_list[j].priority < task_list[i].priority)
-//					{
-//						aux=task_list[j];
-//						task_list[j] = task_list[i];
-//						task_list[i] = aux;
-//					}
-//					else{}
-//				}
-//			}
-//		}
-//		else
-//		{
-//			for(int k=0; k<TOTAL_TASKS; k++)
-//			{
-//				for(int l=k+1; l<TOTAL_TASKS+1; l++)
-//				{
-//					if(task_list[l].priority<task_list[k].priority)
-//					{
-//						aux=task_list[l];
-//						task_list[l]=task_list[k];
-//						task_list[k]=aux;
-//					}
-//				}
-//			}
-//		}
-//	}
-
 	task_list[1].state = SUSPENDED;
 	activate_task(0);
 }
