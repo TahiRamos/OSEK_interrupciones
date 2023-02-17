@@ -27,9 +27,6 @@ typedef enum
 }RGB_colors_t;
 
 //Enciende los leds para el color que queremos segun el caso
-
-void init_RGB(void);
-
 void set_color(RGB_colors_t);
 
 

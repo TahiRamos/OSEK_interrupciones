@@ -11,30 +11,6 @@
 #include "fsl_clock.h"
 #include "fsl_port.h"
 
-void init_RGB(void)
-{
-	gpio_pin_config_t gpio_output_config = {
-				        kGPIO_DigitalOutput,
-				        1,
-				    };
-	//habilita los clocks de los puertos A, C y E
-	CLOCK_EnableClock(kCLOCK_PortA);
-	CLOCK_EnableClock(kCLOCK_PortE);
-	CLOCK_EnableClock(kCLOCK_PortC);
-
-	//config led azul
-	PORT_SetPinMux(PORTA, bit_11, kPORT_MuxAsGpio);
-	GPIO_PinInit(GPIOA, bit_11, &gpio_output_config);
-
-	//config led rojo
-	PORT_SetPinMux(PORTC, bit_9, kPORT_MuxAsGpio);
-	GPIO_PinInit(GPIOC, bit_9, &gpio_output_config);
-
-	//config led verde
-	PORT_SetPinMux(PORTE, bit_6, kPORT_MuxAsGpio);
-	GPIO_PinInit(GPIOE, bit_6, &gpio_output_config);
-}
-
 void set_color(RGB_colors_t color)
 {
 	switch(color)

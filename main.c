@@ -1,29 +1,25 @@
 /*
- * Practica OSEC con Interrupciones
- *
- * Diseñar e implementar los siguientes servicios de OSEK, llamados desde una interrupción
- * activate_task(task_id)
- * terminate_task()
- * chain_task (task_id)
+ * Prueba OSEK
  *
  * Miembros del equipo:
  *		Laura García
  * 		Tahirí Ramos
  *
- * 13/02/2023
+ * 07/02/2023
  *
  */
-
 #include "OSEK.h"
 #include "LED_RGB.h"
+#include "PUSH_BUTTONS.h"
+#include "NVIC.h"
+#include "GPIO.h"
+
+#define MODE1 0x00000100;
 
 int main (void)
 {
-	init_RGB();
+	gpio_init();
 	os_init();
-	while (1)
-	{
-
-	}
-	return 0 ;
+	while (1);
 }
+
