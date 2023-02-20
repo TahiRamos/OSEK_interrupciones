@@ -74,48 +74,26 @@ void gpio_init(void)
 				        0,
 				    };
 
-		gpio_pin_config_t gpio_output_config = {
-				        kGPIO_DigitalOutput,
-				        1,
-				    };
+	const port_pin_config_t button_config = {
+			kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
+			kPORT_FastSlewRate,                                      /* Fast slew rate is configured */
+			kPORT_PassiveFilterEnable,                              /* Passive filter is disabled */
+			kPORT_OpenDrainDisable,                                  /* Open drain is disabled */
+			kPORT_HighDriveStrength,                                 /* High drive strength is configured */
+			kPORT_MuxAsGpio,                                         /* Pin is configured as PTA4 */
+			kPORT_UnlockRegister                                     /* Pin Control Register fields [15:0] are not locked */
+		  };
 
-		const port_pin_config_t button_config = {
-				kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
-				kPORT_FastSlewRate,                                      /* Fast slew rate is configured */
-				kPORT_PassiveFilterEnable,                              /* Passive filter is disabled */
-				kPORT_OpenDrainDisable,                                  /* Open drain is disabled */
-				kPORT_HighDriveStrength,                                 /* High drive strength is configured */
-				kPORT_MuxAsGpio,                                         /* Pin is configured as PTA4 */
-				kPORT_UnlockRegister                                     /* Pin Control Register fields [15:0] are not locked */
-			  };
+	CLOCK_EnableClock(kCLOCK_PortA);
+	CLOCK_EnableClock(kCLOCK_PortD);
 
+	//Initialize SW2
+	GPIO_PinInit(GPIOD, bit_11, &gpio_input_config);
+	PORT_SetPinConfig(PORTD, bit_11, &button_config);
+	PORT_SetPinInterruptConfig(PORTD, bit_11, kPORT_InterruptFallingEdge);
 
-		CLOCK_EnableClock(kCLOCK_PortA);
-		CLOCK_EnableClock(kCLOCK_PortB);
-		CLOCK_EnableClock(kCLOCK_PortC);
-		CLOCK_EnableClock(kCLOCK_PortE);
-
-		//Initialize SW2
-		GPIO_PinInit(GPIOD, bit_11, &gpio_input_config);
-		PORT_SetPinConfig(PORTD, bit_11, &button_config);
-		PORT_SetPinInterruptConfig(PORTD, bit_11, kPORT_InterruptFallingEdge);
-
-		//Initialize SW3
-		GPIO_PinInit(GPIOA, bit_10, &gpio_input_config);
-		PORT_SetPinConfig(PORTA, bit_10, &button_config);
-		PORT_SetPinInterruptConfig(PORTA, bit_10, kPORT_InterruptFallingEdge);
-
-		//config led azul
-		PORT_SetPinMux(PORTA, bit_11, kPORT_MuxAsGpio);
-		GPIO_PinInit(GPIOA, bit_11, &gpio_output_config);
-
-		//config led rojo
-		PORT_SetPinMux(PORTC, bit_9, kPORT_MuxAsGpio);
-		GPIO_PinInit(GPIOC, bit_9, &gpio_output_config);
-
-		//config led verde
-		PORT_SetPinMux(PORTE, bit_6, kPORT_MuxAsGpio);
-		GPIO_PinInit(GPIOE, bit_6, &gpio_output_config);
-
-
+	//Initialize SW3
+	GPIO_PinInit(GPIOA, bit_10, &gpio_input_config);
+	PORT_SetPinConfig(PORTA, bit_10, &button_config);
+	PORT_SetPinInterruptConfig(PORTA, bit_10, kPORT_InterruptFallingEdge);
 }

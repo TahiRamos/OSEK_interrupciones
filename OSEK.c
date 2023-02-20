@@ -1,4 +1,4 @@
-/*
+ /*
  * OSEK.c
  *
  *  Created on: 3 feb 2023
@@ -15,30 +15,7 @@ Task_struct_t task_list[3];
 
 void os_init()
 {
-	//Task_struct_t aux;
-
-	//TASK A
-	task_list[0].priority = 0;
-	task_list[0].schedule = FULL;
-	task_list[0].autostart = TRUE;
-	task_list[0].state = SUSPENDED;
-	task_list[0].ptr_funct = task_A;
-
-	//TASK B
-	task_list[1].priority = 1;
-	task_list[1].schedule = FULL;
-	task_list[1].autostart = FALSE;
-	task_list[1].state = SUSPENDED;
-	task_list[1].ptr_funct = task_B;
-
-
-	//TASK C
-	task_list[2].priority = 2;
-	task_list[2].schedule = FULL;
-	task_list[2].autostart = FALSE;
-	task_list[2].state = SUSPENDED;
-	task_list[2].ptr_funct = task_C;
-
+    //validación de autostart
 	task_list[1].state = SUSPENDED;
 	activate_task(0);
 }

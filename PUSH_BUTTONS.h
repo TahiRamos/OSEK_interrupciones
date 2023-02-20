@@ -13,8 +13,15 @@
 #define EQUIPO_6_T5_PUSH_BUTTONS_H_
 
 #include "stdint.h"
+#include "LED_RGB.h"
 
 #define LOGIC_ONE 0X1
+
+#define PCR_PTD11 (*((volatile uint32_t *)0x4004C02C ))
+#define PCR_PTA10 (*((volatile uint32_t *)0x40049028))
+
+#define GPIO_D_PDOR (*((volatile uint32_t *)0x400FF100))
+#define GPIO_D_PDDR (*((volatile uint32_t *)0x400FF0D4))
 
 typedef enum
 {
