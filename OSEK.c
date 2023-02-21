@@ -10,8 +10,7 @@
 #include "LED_RGB.h"
 #include "fsl_gpio.h"
 
-Task_struct_t task_list[3];
-
+extern Task_struct_t task_list[3];
 
 void os_init()
 {

@@ -15,6 +15,7 @@
 #include "GPIO.h"
 
 #define MODE1 0x00000100;
+Task_struct_t task_list[3];
 
 int main (void)
 {
