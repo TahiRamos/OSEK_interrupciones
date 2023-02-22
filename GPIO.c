@@ -17,7 +17,7 @@
  * 	Initialize GPIO for the periferics used in this project
  */
 
-static void (*gpio_C_callback)(uint32_t flags) = 0;
+static void (*gpio_D_callback)(uint32_t flags) = 0;
 static void (*gpio_A_callback)(uint32_t flags) = 0;
 
 void GPIO_callback_init(gpio_name_t gpio, void (*handler)(uint32_t flags))
@@ -28,29 +28,29 @@ void GPIO_callback_init(gpio_name_t gpio, void (*handler)(uint32_t flags))
 	}
 	else
 	{
-		gpio_C_callback = handler;
+		gpio_D_callback = handler;
 	}
 
 }
 
-void PORTC_IRQHandler(void) //sw2
+void PORTD_IRQHandler(void) //sw2
 {
 
 	uint32_t irq_status = 0;
 
-	irq_status = GPIO_PortGetInterruptFlags(GPIOC);
+	irq_status = GPIO_PortGetInterruptFlags(GPIOD);
 
-	if(gpio_C_callback)
+	if(gpio_D_callback)
 	{
-		gpio_C_callback(irq_status);
+		gpio_D_callback(irq_status);
 	}
 
-	GPIO_PortClearInterruptFlags(GPIOC, irq_status); //Red
+	GPIO_PortClearInterruptFlags(GPIOD, irq_status);
 
 
 }
 
-void PORTA_IRQHandler(void) //sw2
+void PORTA_IRQHandler(void) //sw3
 {
 
 	uint32_t irq_status = 0;
@@ -62,8 +62,7 @@ void PORTA_IRQHandler(void) //sw2
 		gpio_A_callback(irq_status);
 	}
 
-	GPIO_PortClearInterruptFlags(GPIOA, irq_status); //Red
-
+	GPIO_PortClearInterruptFlags(GPIOA, irq_status);
 
 }
 

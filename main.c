@@ -41,6 +41,10 @@ int main (void)
 	task_list[2].state = SUSPENDED;
 	task_list[2].ptr_funct = task_C;
 
+	NVIC_set_basepri_threshold(PRIORITY_10);
+	/**Enables and sets a particular interrupt and its priority*/
+	NVIC_enable_interrupt_and_priotity(PORTA_IRQ,PRIORITY_4);
+
 	gpio_init();
 	os_init();
 	while (1);

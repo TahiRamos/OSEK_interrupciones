@@ -9,6 +9,7 @@
 #include "OSEK.h"
 #include "LED_RGB.h"
 #include "fsl_gpio.h"
+#include "GPIO.h"
 
 extern Task_struct_t task_list[3];
 
@@ -72,6 +73,7 @@ void terminate_task(void)
 
 void scheduler()
 {
+	//guardar contexto
 	for(int8_t i = TOTAL_PRIORITY; i>=0 ; i--)
 	{
 		for(int8_t j = 0; j<TOTAL_TASKS ; j++)
@@ -79,6 +81,7 @@ void scheduler()
 			if((task_list[j].state == READY)&&(task_list[j].priority == i))
 			{
 				task_list[j].state = RUNNING;
+				//restaurar contexto
 				task_list[j].ptr_funct();
 				break;
 			}
@@ -103,7 +106,7 @@ void task_A (void)
 {
 	set_color(GREEN);
 	delay(2000000);
-	activate_task (task_B_ID);
+	GPIO_callback_init(GPIO_A, activate_task (task_B_ID));
 	set_color(GREEN);
 	delay(2000000);
 	terminate_task();
@@ -113,13 +116,14 @@ void task_B (void)
 {
 	set_color(RED);
 	delay(2000000);
-	chained_task (task_C_ID);
+	GPIO_callback_init(GPIO_A, chained_task (task_C_ID));
 }
 
 void task_C (void)
 {
 	set_color(BLUE);
 	delay(2000000);
+	GPIO_callback_init(GPIO_A, terminate_task);
 	terminate_task ();
 }
 
