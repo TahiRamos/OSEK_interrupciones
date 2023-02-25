@@ -46,8 +46,6 @@ void PORTD_IRQHandler(void) //sw2
 	}
 
 	GPIO_PortClearInterruptFlags(GPIOD, irq_status);
-
-
 }
 
 void PORTA_IRQHandler(void) //sw3
@@ -61,9 +59,7 @@ void PORTA_IRQHandler(void) //sw3
 	{
 		gpio_A_callback(irq_status);
 	}
-
 	GPIO_PortClearInterruptFlags(GPIOA, irq_status);
-
 }
 
 void gpio_init(void)

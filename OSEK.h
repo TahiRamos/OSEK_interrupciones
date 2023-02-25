@@ -55,5 +55,6 @@ void delay(uint32_t);
 void task_A (void);
 void task_B (void);
 void task_C (void);
+void tasks(void);
 
 #endif /* OSEK_H_ */

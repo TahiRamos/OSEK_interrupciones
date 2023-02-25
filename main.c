@@ -45,6 +45,7 @@ int main (void)
 	/**Enables and sets a particular interrupt and its priority*/
 	NVIC_enable_interrupt_and_priotity(PORTA_IRQ,PRIORITY_4);
 
+	init_RGB();
 	gpio_init();
 	os_init();
 	while (1);
