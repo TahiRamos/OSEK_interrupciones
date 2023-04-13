@@ -2,33 +2,45 @@
  * OSEK.c
  *
  *  Created on: 3 feb 2023
- *      Author: Tahirí & Laura
+ *      Author: Tahirí
  *
  */
 
 #include "OSEK.h"
 #include "LED_RGB.h"
-#include "fsl_gpio.h"
-#include "GPIO.h"
 
 extern Task_struct_t task_list[3];
-static uint8_t g_interrupt_count;
+uint8_t destino;
+uint32_t *contexto_temp;
 
 void os_init()
 {
-    //validación de autostart
-	task_list[1].state = SUSPENDED;
-	activate_task(0);
-}
+	uint8_t task_ID;
 
+		for(task_ID = 0; task_ID<TOTAL_TASKS; task_ID++ )
+		{
+			if(task_list[task_ID].AUTOSTART)
+			{
+				activate_task(task_ID);
+			}
+		}
+		//recupera contexto
+		asm ("LDR R0,=destino");
+		asm ("STR R1,[R0]");
+		scheduler();
+}
 /*
- *  The specified task is transferred from the suspended state
- *  into the ready state
+ *  The specified task is transferred from the suspended ACTIVATION
+ *  into the ready ACTIVATION
  */
 void activate_task(uint8_t task_ID)
 {
-    task_list[task_ID].state = READY;    // 3:wait    2:running    1:ready    0:suspend
-
+    task_list[task_ID].ACTIVATION = READY;    // 3:wait    2:running    1:ready    0:suspend
+    // if interrupción, recupera contexto completo
+    // else, recupera contexto del stack usando el sp desde c
+    //recupera contexto
+	asm ("LDR R0,= destino");
+	asm ("STR R1,[R0]");
     scheduler(); //barrido de tareas
 }
 
@@ -41,9 +53,9 @@ void chained_task(uint8_t task_ID)
 {
 	for(uint8_t i= 0; i <TOTAL_TASKS; i++)
 		{
-			if(task_list[i].state == RUNNING)
+			if(task_list[i].ACTIVATION == RUNNING)
 			{
-				task_list[i].state = SUSPENDED;
+				task_list[i].ACTIVATION = SUSPENDED;
 			}
 		}
 	activate_task(task_ID);
@@ -51,16 +63,19 @@ void chained_task(uint8_t task_ID)
 
 
 /*
- * The calling task is transferred from the running state into
- * the suspended state
+ * The calling task is transferred from the running ACTIVATION into
+ * the suspended ACTIVATION
  */
 void terminate_task(void)
 {
 	for(uint8_t i= 0; i <TOTAL_TASKS; i++)
 	{
-		if(task_list[i].state == RUNNING)
+		if(task_list[i].ACTIVATION == RUNNING)
 		{
-			task_list[i].state = SUSPENDED;
+			task_list[i].ACTIVATION = SUSPENDED;
+			//recupera contexto
+			asm ("LDR R0,= destino");
+			asm ("STR R1,[R0]");
 			scheduler();
 		}
 	}
@@ -74,15 +89,17 @@ void terminate_task(void)
 
 void scheduler()
 {
-	//guardar contexto
 	for(int8_t i = TOTAL_PRIORITY; i>=0 ; i--)
 	{
 		for(int8_t j = 0; j<TOTAL_TASKS ; j++)
 		{
-			if((task_list[j].state == READY)&&(task_list[j].priority == i))
+			if((task_list[j].ACTIVATION == READY)&&(task_list[j].PRIORITY == i))
 			{
-				task_list[j].state = RUNNING;
+				task_list[j].ACTIVATION = RUNNING;
+				contexto_temp = &task_list[j].CONTEXTO;
 				//restaurar contexto
+				asm ("LDR R0,=contexto_temp");
+				asm ("LDR R1,[R0]");
 				task_list[j].ptr_funct();
 				break;
 			}
@@ -91,63 +108,28 @@ void scheduler()
 }
 
 
-
-void delay(uint32_t delay)
-{
-    volatile uint32_t j;
-    for(j = delay; j > 0; j--)
-    {
-        __asm("nop");
-    }
-}
-
-
-//TASKs
 void task_A (void)
 {
-	set_color(GREEN);
+	set_color(RED);
 	delay(2000000);
-	GPIO_callback_init(GPIO_A, tasks);
-	set_color(GREEN);
+	activate_task(task_B_ID);
+
+	set_color(RED);
 	delay(2000000);
-	GPIO_callback_init(GPIO_A, tasks);
 }
 
 void task_B (void)
 {
-	set_color(RED);
+	//led azul
+	set_color(BLUE);
 	delay(2000000);
-	GPIO_callback_init(GPIO_A, tasks);
+	chained_task (task_C_ID);
 }
 
 void task_C (void)
 {
-	set_color(BLUE);
+	//led verde
+	set_color(GREEN);
 	delay(2000000);
-	GPIO_callback_init(GPIO_A, tasks);
+	terminate_task();
 }
-
-void tasks(void)
-{
-	if(1 == g_interrupt_count)
-	{
-		activate_task(task_B_ID);
-		g_interrupt_count++;
-	}
-	else if(2 == g_interrupt_count)
-	{
-		chained_task(task_C_ID);
-		g_interrupt_count++;
-	}
-	else if(3 == g_interrupt_count)
-	{
-		terminate_task();
-		g_interrupt_count++;
-	}
-	else if(4 == g_interrupt_count)
-	{
-		terminate_task();
-		g_interrupt_count = 0;
-	}
-}
-

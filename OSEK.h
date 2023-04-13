@@ -2,7 +2,7 @@
  * OSEK.h
  *
  *  Created on: 3 feb 2023
- *      Author: Tahirí Ramos & Laura
+ *      Author: Tahirí Ramos
  */
 
 #ifndef OSEK_H_
@@ -17,12 +17,14 @@
 #define TOTAL_TASKS 3
 #define TOTAL_PRIORITY 5
 
-typedef enum{
+typedef enum
+{
 	NON,
 	FULL
 }schedule_t;	// non preemtive, full preemtive
 
-typedef enum{
+typedef enum
+{
     FALSE,
 	TRUE
 }boolean_t;		//for autostart
@@ -37,24 +39,27 @@ typedef enum{
 typedef struct
 {
 	void (*ptr_funct)(void);
-    uint8_t priority;
-    schedule_t schedule;
-	boolean_t autostart;
-	uint8_t activation;
-	state_t state;
+    uint8_t PRIORITY;
+    schedule_t SCHEDULE;
+	boolean_t AUTOSTART;
+	uint8_t ACTIVATION;
+	uint32_t CONTEXTO;
 }Task_struct_t;
 
-
 void os_init();
-void activate_task(uint8_t);
-void chained_task(uint8_t);
-void terminate_task(void);
-void scheduler();
 
-void delay(uint32_t);
+void activate_task(uint8_t);
+
+void chained_task(uint8_t);
+
+void terminate_task(void);
+
+void scheduler(void);
+
 void task_A (void);
+
 void task_B (void);
+
 void task_C (void);
-void tasks(void);
 
 #endif /* OSEK_H_ */

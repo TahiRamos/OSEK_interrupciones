@@ -14,7 +14,6 @@
 #include "NVIC.h"
 #include "GPIO.h"
 
-#define MODE1 0x00000100;
 Task_struct_t task_list[3];
 
 int main (void)
@@ -47,7 +46,8 @@ int main (void)
 
 	init_RGB();
 	gpio_init();
-	os_init();
-	while (1);
+	while (1){
+		os_init();
+	}
 }
 

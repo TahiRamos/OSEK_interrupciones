@@ -39,6 +39,4 @@ typedef struct
 } gpio_interrupt_flags_t;
 
 
-
-
 #endif /* EQUIPO_6_T5_GPIO_H_ */
