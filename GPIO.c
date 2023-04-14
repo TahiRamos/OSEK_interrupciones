@@ -42,6 +42,7 @@ void PORTA_IRQHandler(void) //sw3
 	else if(3 == interrupt_count)
 	{
 		activate_task(task_C_ID);
+		interrupt_count = 0;
 	}
 }
 
