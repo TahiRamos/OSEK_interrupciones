@@ -107,29 +107,51 @@ void scheduler()
 	}
 }
 
-
+//TASKs
 void task_A (void)
 {
-	set_color(RED);
+	set_color(GREEN);
 	delay(2000000);
-	activate_task(task_B_ID);
-
-	set_color(RED);
+	GPIO_callback_init(GPIO_A, tasks);
+	set_color(GREEN);
 	delay(2000000);
+	GPIO_callback_init(GPIO_A, tasks);
 }
 
 void task_B (void)
 {
-	//led azul
-	set_color(BLUE);
+	set_color(RED);
 	delay(2000000);
-	chained_task (task_C_ID);
+	GPIO_callback_init(GPIO_A, tasks);
 }
 
 void task_C (void)
 {
-	//led verde
-	set_color(GREEN);
+	set_color(BLUE);
 	delay(2000000);
-	terminate_task();
+	GPIO_callback_init(GPIO_A, tasks);
+}
+
+void tasks(void)
+{
+	if(1 == g_interrupt_count)
+	{
+		activate_task(task_B_ID);
+		g_interrupt_count++;
+	}
+	else if(2 == g_interrupt_count)
+	{
+		chained_task(task_C_ID);
+		g_interrupt_count++;
+	}
+	else if(3 == g_interrupt_count)
+	{
+		terminate_task();
+		g_interrupt_count++;
+	}
+	else if(4 == g_interrupt_count)
+	{
+		terminate_task();
+		g_interrupt_count = 0;
+	}
 }
