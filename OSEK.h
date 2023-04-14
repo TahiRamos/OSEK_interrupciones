@@ -9,6 +9,7 @@
 #define OSEK_H_
 
 #include "stdint.h"
+#include "bits.h"
 
 #define task_A_ID    0
 #define task_B_ID    1
@@ -22,12 +23,6 @@ typedef enum
 	NON,
 	FULL
 }schedule_t;	// non preemtive, full preemtive
-
-typedef enum
-{
-    FALSE,
-	TRUE
-}boolean_t;		//for autostart
 
 typedef enum{
 	READY,

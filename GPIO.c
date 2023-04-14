@@ -6,6 +6,7 @@
  */
 
 #include "GPIO.h"
+#include "OSEK.h"
 #include "bits.h"
 #include "fsl_clock.h"
 
@@ -17,36 +18,7 @@
  * 	Initialize GPIO for the periferics used in this project
  */
 
-static void (*gpio_D_callback)(uint32_t flags) = 0;
-static void (*gpio_A_callback)(uint32_t flags) = 0;
-
-void GPIO_callback_init(gpio_name_t gpio, void (*handler)(uint32_t flags))
-{
-	if(GPIO_A == gpio)
-	{
-		gpio_A_callback = handler;
-	}
-	else
-	{
-		gpio_D_callback = handler;
-	}
-
-}
-
-void PORTD_IRQHandler(void) //sw2
-{
-
-	uint32_t irq_status = 0;
-
-	irq_status = GPIO_PortGetInterruptFlags(GPIOD);
-
-	if(gpio_D_callback)
-	{
-		gpio_D_callback(irq_status);
-	}
-
-	GPIO_PortClearInterruptFlags(GPIOD, irq_status);
-}
+uint8_t interrupt_count = 0;
 
 void PORTA_IRQHandler(void) //sw3
 {
@@ -54,12 +26,23 @@ void PORTA_IRQHandler(void) //sw3
 	uint32_t irq_status = 0;
 
 	irq_status = GPIO_PortGetInterruptFlags(GPIOA);
-
-	if(gpio_A_callback)
+	if(TRUE == irq_status)
 	{
-		gpio_A_callback(irq_status);
+		interrupt_count++;
 	}
 	GPIO_PortClearInterruptFlags(GPIOA, irq_status);
+	if(1 == interrupt_count)
+	{
+		activate_task(task_A_ID);
+	}
+	else if(2 == interrupt_count)
+	{
+		activate_task(task_B_ID);
+	}
+	else if(3 == interrupt_count)
+	{
+		activate_task(task_C_ID);
+	}
 }
 
 void gpio_init(void)

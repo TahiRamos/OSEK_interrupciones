@@ -11,6 +11,7 @@
 #include "OSEK.h"
 #include "LED_RGB.h"
 #include "PUSH_BUTTONS.h"
+#include "bits.h"
 #include "NVIC.h"
 #include "GPIO.h"
 

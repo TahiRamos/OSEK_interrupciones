@@ -1,5 +1,9 @@
 
 /*! This definition is as a general definitions to bits in regiter or pins in the microcontroller.*/
+
+#ifndef EQUIPO_6_T5_bits_H_
+#define EQUIPO_6_T5_bits_H_
+
 typedef enum {bit_0,  /*!< Bit 0 */
 			  bit_1,  /*!< Bit 1 */
 			  bit_2,  /*!< Bit 2 */
@@ -39,3 +43,5 @@ typedef enum {bit_0,  /*!< Bit 0 */
 typedef enum{FALSE, TRUE} boolean_t;
 /*! This definition is as a general definitions to bits turn-on or turn-off any bit*/
 typedef enum {BIT_OFF, BIT_ON} bit_on_off_t;
+
+#endif /* EQUIPO_6_T5_bits_H_ */
