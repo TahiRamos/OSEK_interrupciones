@@ -26,7 +26,7 @@ void PORTA_IRQHandler(void) //sw3
 	uint32_t irq_status = 0;
 
 	irq_status = GPIO_PortGetInterruptFlags(GPIOA);
-	if(TRUE == irq_status)
+	if(FALSE != irq_status)
 	{
 		interrupt_count++;
 	}
